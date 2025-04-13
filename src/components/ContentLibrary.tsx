@@ -47,16 +47,25 @@ interface ContentItem {
   tags: string[];
   language: string;
   region: string;
+  content?: string;
+  trend?: string;
+  model?: string;
+  tone?: string;
+  length?: number;
 }
 
-const ContentLibrary = () => {
+interface ContentLibraryProps {
+  initialContent?: any[];
+}
+
+const ContentLibrary = ({ initialContent = [] }: ContentLibraryProps) => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
-  // Mock data for content items
-  const contentItems: ContentItem[] = [
+  // Combine initial content with mock data
+  const mockItems: ContentItem[] = [
     {
       id: "1",
       title: "Top 10 AI Trends in 2023",
@@ -117,6 +126,32 @@ const ContentLibrary = () => {
       language: "English",
       region: "Global",
     },
+  ];
+
+  // Convert initialContent to ContentItem format
+  const convertedInitialContent: ContentItem[] = initialContent.map(
+    (item, index) => ({
+      id: `generated-${index}`,
+      title: item.title || `Content about ${item.trend || "Unknown Topic"}`,
+      excerpt:
+        item.content?.substring(0, 150).replace(/<[^>]*>/g, "") + "..." ||
+        "No content preview available",
+      date: item.date || new Date().toISOString(),
+      tags: item.trend ? [item.trend] : [],
+      language: item.language || "English",
+      region: item.region || "Global",
+      content: item.content,
+      trend: item.trend,
+      model: item.model,
+      tone: item.tone,
+      length: item.length,
+    }),
+  );
+
+  // Combine mock items with converted initial content
+  const contentItems: ContentItem[] = [
+    ...convertedInitialContent,
+    ...mockItems,
   ];
 
   // All unique tags from content items

@@ -19,15 +19,28 @@ import ProfilePage from "./ProfilePage";
 import SubscriptionPage from "./SubscriptionPage";
 import BillingPage from "./BillingPage";
 import SettingsPage from "./SettingsPage";
+import { TrendData } from "@/hooks/useTrendData";
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("trends");
+  const [selectedTrend, setSelectedTrend] = useState<TrendData | null>(null);
+  const [savedContent, setSavedContent] = useState<any[]>([]);
 
   // Mock user data
   const user = {
     name: "John Doe",
     email: "john@example.com",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
+  };
+
+  const handleTrendSelect = (trend: TrendData) => {
+    setSelectedTrend(trend);
+    setActiveTab("generate");
+  };
+
+  const handleSaveContent = (content: any) => {
+    setSavedContent((prev) => [content, ...prev]);
+    setActiveTab("library");
   };
 
   return (
@@ -144,9 +157,18 @@ const Home = () => {
 
         {/* Content Area */}
         <main className="flex-1 overflow-auto p-6">
-          {activeTab === "trends" && <TrendDiscoveryPanel />}
-          {activeTab === "generate" && <ContentGenerationPanel />}
-          {activeTab === "library" && <ContentLibrary />}
+          {activeTab === "trends" && (
+            <TrendDiscoveryPanel onSelectTrend={handleTrendSelect} />
+          )}
+          {activeTab === "generate" && (
+            <ContentGenerationPanel
+              selectedTrend={selectedTrend?.keyword}
+              onSaveContent={handleSaveContent}
+            />
+          )}
+          {activeTab === "library" && (
+            <ContentLibrary initialContent={savedContent} />
+          )}
           {activeTab === "profile" && <ProfilePage />}
           {activeTab === "subscription" && <SubscriptionPage />}
           {activeTab === "billing" && <BillingPage />}

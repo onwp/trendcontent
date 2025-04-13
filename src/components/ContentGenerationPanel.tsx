@@ -71,6 +71,8 @@ const ContentGenerationPanel: React.FC<ContentGenerationPanelProps> = ({
       tone: contentTone,
       length: contentLength[0],
       date: new Date().toISOString(),
+      language: "English",
+      region: "United States",
     });
   };
 
@@ -196,7 +198,8 @@ const ContentGenerationPanel: React.FC<ContentGenerationPanelProps> = ({
                 <TabsContent value="editor" className="min-h-[500px]">
                   <RichTextEditor
                     content={generatedContent}
-                    onChange={setGeneratedContent}
+                    onSave={(content) => setGeneratedContent(content)}
+                    selectedTrend={selectedTrend}
                   />
                 </TabsContent>
                 <TabsContent

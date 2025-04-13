@@ -68,6 +68,9 @@ const RichTextEditor = ({
   const [selectedLanguage, setSelectedLanguage] = useState(language);
   const [selectedRegion, setSelectedRegion] = useState(region);
   const [seoScore, setSeoScore] = useState(85);
+  const [translationInProgress, setTranslationInProgress] = useState(false);
+  const [targetLanguage, setTargetLanguage] = useState("Spanish");
+  const [translatedContent, setTranslatedContent] = useState("");
 
   // Mock SEO recommendations
   const seoRecommendations = [
@@ -101,6 +104,21 @@ const RichTextEditor = ({
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value);
     // In a real implementation, this would trigger a translation API call
+  };
+
+  const handleTargetLanguageChange = (value: string) => {
+    setTargetLanguage(value);
+    translateContent(editorContent, value);
+  };
+
+  const translateContent = (content: string, targetLang: string) => {
+    setTranslationInProgress(true);
+
+    // Simulate API call with timeout
+    setTimeout(() => {
+      setTranslatedContent(translations[targetLang] || "");
+      setTranslationInProgress(false);
+    }, 1000);
   };
 
   const handleRegionChange = (value: string) => {
@@ -275,7 +293,10 @@ const RichTextEditor = ({
               <div>
                 <div className="mb-4 flex items-center justify-between">
                   <Label>Target Language</Label>
-                  <Select defaultValue="Spanish">
+                  <Select
+                    value={targetLanguage}
+                    onValueChange={handleTargetLanguageChange}
+                  >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select language" />
                     </SelectTrigger>
@@ -288,17 +309,34 @@ const RichTextEditor = ({
                     </SelectContent>
                   </Select>
                 </div>
-                <Textarea
-                  className="min-h-[300px] w-full bg-gray-50"
-                  value={translations["Spanish"]}
-                  readOnly
-                  placeholder="Translated content will appear here"
-                />
+                <div className="relative">
+                  <Textarea
+                    className="min-h-[300px] w-full bg-gray-50"
+                    value={translatedContent}
+                    readOnly
+                    placeholder="Translated content will appear here"
+                  />
+                  {translationInProgress && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+                      <div className="flex flex-col items-center">
+                        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+                        <span className="mt-2 text-sm">Translating...</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex justify-end space-x-2">
-              <Button variant="outline">Copy Translation</Button>
-              <Button>Save Translation</Button>
+              <Button
+                variant="outline"
+                disabled={!translatedContent || translationInProgress}
+              >
+                Copy Translation
+              </Button>
+              <Button disabled={!translatedContent || translationInProgress}>
+                Save Translation
+              </Button>
             </div>
           </TabsContent>
 
