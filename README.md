@@ -1,30 +1,67 @@
-# React + TypeScript + Vite
+# Google Trends Content Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive SaaS platform that leverages real-time Google Trends data to help content creators generate SEO-optimized content across multiple languages and regions.
 
-Currently, two official plugins are available:
+![Google Trends Content Generator Screenshot](./trend-content.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **Trend Discovery Dashboard**: Interactive visualizations of trending topics by country/language using google-trends-api with filters for timeframes and categories
+- **AI Content Generation Interface**: Rich text editor with model selection (OpenAI, Gemini, Perplexity), tone/style controls, and one-click generation based on selected trends
+- **Content Library**: Save, organize, and edit generated content with keyword tagging and search functionality
+- **Multi-language Support**: Translation preview and region-specific SEO recommendations
+- **Integration Options**: WordPress, social media platforms, and content calendars via API/webhooks
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Tech Stack
 
-- Configure the top-level `parserOptions` property like this:
+- React + TypeScript + Vite
+- Tailwind CSS with Shadcn UI components
+- Google Trends API integration
+- Multiple AI model integrations (OpenAI, Gemini, Perplexity)
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd google-trends-content-generator
+
+# Install dependencies
+npm install
+# or
+yarn install
+
+# Start the development server
+npm run dev
+# or
+yarn dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+VITE_OPENAI_API_KEY=your_openai_api_key
+VITE_GEMINI_API_KEY=your_gemini_api_key
+VITE_PERPLEXITY_API_KEY=your_perplexity_api_key
+```
+
+## Usage
+
+1. **Discover Trends**: Use the Trend Discovery Dashboard to find trending topics in your region and category
+2. **Generate Content**: Select a trend and use the AI Content Generation Interface to create content
+3. **Customize**: Edit the generated content using the Rich Text Editor
+4. **Save & Organize**: Store your content in the Content Library for future use
+5. **Export & Share**: Integrate with WordPress, social media, or content calendars
+
+## License
+
+MIT
