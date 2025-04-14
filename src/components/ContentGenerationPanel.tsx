@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AlertCircle,
   Sparkles,
@@ -30,8 +31,11 @@ import {
   Download,
   Share2,
   RefreshCw,
+  XCircle,
 } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
+import AIModelSelector from "./ContentGeneration/AIModelSelector";
+import { generateContent, type AIRequestParams } from "@/services/aiService";
 
 interface ContentGenerationPanelProps {
   selectedTrend?: string;
@@ -49,17 +53,39 @@ const ContentGenerationPanel: React.FC<ContentGenerationPanelProps> = ({
   const [generatedContent, setGeneratedContent] = useState<string>("");
   const [customInstructions, setCustomInstructions] = useState<string>("");
   const [seoOptimized, setSeoOptimized] = useState<boolean>(true);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setIsGenerating(true);
+    setApiError(null);
 
-    // Simulate API call with timeout
-    setTimeout(() => {
-      const mockContent = `<h2>Understanding ${selectedTrend}</h2><p>In today's rapidly evolving digital landscape, ${selectedTrend} has emerged as a transformative force across industries. This technology continues to reshape how businesses operate and how consumers interact with products and services.</p><p>Recent studies indicate that adoption of ${selectedTrend} has increased by 45% in the past year alone, with organizations reporting significant improvements in efficiency and customer satisfaction.</p><h3>Key Benefits</h3><ul><li>Enhanced operational efficiency</li><li>Improved decision-making capabilities</li><li>Reduced costs and resource utilization</li><li>Personalized customer experiences</li></ul><p>As we look toward the future, the potential applications of ${selectedTrend} appear limitless, promising continued innovation and disruption across the global economy.</p>`;
+    try {
+      const params: AIRequestParams = {
+        prompt: `Generate content about ${selectedTrend}`,
+        model: aiModel,
+        tone: contentTone,
+        length: contentLength[0],
+        seoOptimized,
+        customInstructions,
+        trend: selectedTrend,
+      };
 
-      setGeneratedContent(mockContent);
+      const response = await generateContent(params);
+
+      if (response.error) {
+        console.error("Error generating content:", response.error);
+        setApiError(response.error);
+      } else {
+        setGeneratedContent(response.content);
+      }
+    } catch (error) {
+      console.error("Error in content generation:", error);
+      setApiError(
+        error instanceof Error ? error.message : "An unexpected error occurred",
+      );
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
   const handleSave = () => {
@@ -96,21 +122,19 @@ const ContentGenerationPanel: React.FC<ContentGenerationPanelProps> = ({
         </CardHeader>
 
         <CardContent className="space-y-6">
+          {apiError && (
+            <Alert variant="destructive" className="mb-4">
+              <XCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{apiError}</AlertDescription>
+            </Alert>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="ai-model">AI Model</Label>
-                <Select value={aiModel} onValueChange={setAiModel}>
-                  <SelectTrigger id="ai-model">
-                    <SelectValue placeholder="Select AI Model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="openai">OpenAI (GPT-4)</SelectItem>
-                    <SelectItem value="gemini">Google Gemini</SelectItem>
-                    <SelectItem value="perplexity">Perplexity</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <AIModelSelector
+                selectedModel={aiModel}
+                onModelChange={setAiModel}
+              />
 
               <div className="space-y-2">
                 <Label htmlFor="content-tone">Content Tone</Label>
@@ -227,7 +251,12 @@ const ContentGenerationPanel: React.FC<ContentGenerationPanelProps> = ({
 
         <CardFooter className="flex justify-between border-t p-4">
           <div className="flex space-x-2">
-            <Button variant="outline" size="sm" disabled={!generatedContent}>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!generatedContent || isGenerating}
+              onClick={handleGenerate}
+            >
               <RefreshCw className="mr-2 h-4 w-4" />
               Regenerate
             </Button>

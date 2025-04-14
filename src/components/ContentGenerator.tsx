@@ -156,7 +156,7 @@ const ContentGenerator = ({
                       <Label htmlFor="ai-model">AI Model</Label>
                       <AIModelSelector
                         selectedModel={selectedModel}
-                        onSelectModel={setSelectedModel}
+                        onModelChange={setSelectedModel}
                       />
                     </div>
 
