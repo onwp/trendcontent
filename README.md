@@ -30,8 +30,8 @@ A comprehensive SaaS platform that leverages real-time Google Trends data to hel
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd google-trends-content-generator
+git clone https://github.com/onwp/trendcontent
+cd trendcontent
 
 # Install dependencies
 npm install
